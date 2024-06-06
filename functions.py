@@ -10,15 +10,16 @@ from sklearn.ensemble import RandomForestRegressor
 def ReadEnergetic(dir_path):
     '''
     This function takes in input the directory path, reads the data from the "Burst_energetics.txt" 
-    file and returns the data in the form of a pandas DataFrame. 
+    file in the folder "data" and returns the data in the form of a pandas DataFrame. 
     
-    The columns name are consistent with the explained labels in the header section of the file.
+    The columns name are consistent with the explained labels in the header section of the text file.
     '''
     col_names = ['ID', 'z', 'S', 'e_S', 'E_S', 'Tp1024', 'f_Tp124', 'Fp1024', 
                  'e_Fp1024', 'E_Fp1024', 'Tp64', 'Fp64', 'e_Fp64', 'E_Fp64', 
                  'Tp64r', 'Fp64r', 'e_Fp64r', 'E_Fp64r', 'Eiso', 'e_Eiso', 
                  'Liso', 'e_Liso', 'Flim', 'zmax']
 
+    # I've added this so that it works for the python notebook.
     if dir_path != '':
         dir_path += '/'
 
@@ -32,7 +33,7 @@ def ReadEnergetic(dir_path):
 def ReadSpectral(dir_path):
     '''
     This function takes in input the directory path, reads the data from the "Burst_energetics.txt" 
-    file and returns the data in the form of a pandas DataFrame. 
+    file in the folder "data" and returns the data in the form of a pandas DataFrame. 
     
     The columns name are consistent with the explained labels in the header section of the file.
     '''
@@ -55,11 +56,11 @@ def ReadSpectral(dir_path):
     To fix that, the function takes the f_beta columns (the flag on beta) that
     could be 0 or 1. 
     If f_beta is 0, beta is the best fit value in the Band Model, so
-    there are the values of beta and the corresponding errors (upper and lower), and 
+    there are values of beta and the corresponding errors (upper and lower), and 
     the row of the DataFrame is ok without modifications.
     If f_beta is 1, the value of beta is provided by (beta_min - beta) -> (see section 4.2.2 of the paper)
     so we don't have the errors on beta and we have to transpose the values in the row.
-    If f_beta isn't 0 or 1, we are in the CPL Model and the "read_csv" function has skipped the 
+    If f_beta isn't 0 or 1, we are in the CPL Model and the "read_csv" function had skipped the 
     empty spaces because we don't have values of f_beta, beta and correlated errors, so we transpose 
     the values in that row.
     An exeption occur with a point in the dataset corresponding to SMod == PL, so it is also fixed 
@@ -105,7 +106,7 @@ def ReadSpectral(dir_path):
 
 def DataReading(self, dir_path, Energetic=True, Spectral=True):
     '''
-    This function use together the previos functions to read the data from the txt files in 
+    This function uses together the previos functions to read the data from the txt files in 
     the directory path provided by the user. One can change the input boolean values of 
     "Energetic" and "Spectral" if he want to read only one of the txt file.
     After reading the data the function saves it as a pandas DataFrame in the class attributes.
@@ -115,11 +116,10 @@ def DataReading(self, dir_path, Energetic=True, Spectral=True):
     if Spectral:
         self.spectral_data = ReadSpectral(dir_path)
 
-    
+# Just a simple setter
 def SetModel(self, model):
     self.model = model
 #-------------------------------------------------------------------------------------------------#
-
 def CorrMatrix(self, DataFrame, filter=None):
     '''
     This function is used to draw a correlation matrix from the features of the dataset.
@@ -133,14 +133,16 @@ def CorrMatrix(self, DataFrame, filter=None):
     
 #---------------------------------------------------------------------------------------------------#
 '''
-This function gets the data from a pandas dataframe and return the values of X and y 
+This function takes the data from a pandas dataframe and return the values of X and y 
 to use in the model. This works filtering z for y and then dropping z from the dataframe 
 to have all the features without z for X.
 '''
 def GetData(self, df):
-    y = df[['z']].values
+    y_temp = df[['z']].to_numpy()
     df.drop(['z'], axis=1)
-    X = df.values
+    X = df.to_numpy()
+    
+    y = y_temp.reshape(-1)      # reshape to a 1-D array
     
     # Saving in the class
     self.X = X
@@ -151,9 +153,9 @@ def GetData(self, df):
 def Run(self, df, train_size = None, test_size = None, random_state = None, 
         n_estimators = 100, max_depth = None, min_samples_leaf = 1):
     '''
-    This function builds the Random Forest Regressor model and saves in the class the 
+    This function builds the Random Forest Regressor model and saves the 
     values of X and y for the training and testing parts, the predicted y on the X_test 
-    and the model itself.
+    and the model itself in the class.
     '''
     # Taking the X and Y from the DataFrame
     X, y = self.GetData(df)

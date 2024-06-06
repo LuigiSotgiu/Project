@@ -15,9 +15,11 @@ energ_par = obj.energetic_data
 filter_ener = ['z', 'S', 'Tp64', 'Fp64', 'Eiso','Liso']
 filter_spec = ['tstart', 'DeltaT', 'alpha', 'Ep', 'F']
 
+spec_par_reset = spec_par.reset_index(drop=True)  # Reset index and drop the old index column
+
 # Concatenating the two dataframe to form one and filtering
 df1 = energ_par[energ_par['ID'] != 'GRB080413B'][filter_ener]   # Exluding GRB080413B becuase 'SMOD' = 'PL'
-df2 = spec_par[spec_par['SMod'] == 'CPL'][spec_par['SType'] == 'i'][filter_spec]    # Using the CPL SMod
+df2 = spec_par[(spec_par['SMod'] == 'CPL') & (spec_par['SType'] == 'i')][filter_spec]    # Using the CPL SMod
 df_temp = pd.concat([df1, df2], axis=0)     # Concatenating
 df = df_temp.apply(lambda x: pd.Series(x.dropna().values))      # Dropping the Nan values
 
@@ -38,6 +40,6 @@ test_score = obj.model.forest.score(obj.model.X_test, obj.model.y_test)
 train_score = obj.model.forest.score(obj.model.X_train, obj.model.y_train)
 
 for a, b in zip(obj.model.y_test, obj.model.y_pred):
-    print('z real: {:1.3f}\t\tz predicted: {:1.3f}'.format(a[0], b))
+    print('z test: {:1.3f}\t\tz predicted: {:1.3f}'.format(a, b))
     
 print('The test score is : {:.3f} while the train score is: {:.3f}'.format(test_score, train_score))
