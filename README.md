@@ -1,3 +1,5 @@
+IMPORTANT: The code works with the python modules: "numpy", "seaborn", "pandas", "matplotlib", "scikit-learn".
+
 The project is structured as follows:
 
 the main.ipynb file is a python notebook when I use the classes defined in ML_GRB.py to illustrate how one can implement it in a code;
