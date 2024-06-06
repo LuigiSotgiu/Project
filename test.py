@@ -1,12 +1,8 @@
-from ML_GRB import ML_GRB, RND_FOREST
-import matplotlib.pyplot as plt
+import os
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import accuracy_score, f1_score
-import numpy as np
+from ML_GRB import ML_GRB, RND_FOREST
 
-dir_path = '/mnt/c/Users/gigig/Documents/Università/Tesi/data'  # directory path
+dir_path = os.path.dirname(os.path.abspath(__file__))   # directory path
 
 obj = ML_GRB()      # initializing the main class ---> see ML_GRB.py
 obj.DataReading(dir_path)       # reading the data ---> see functions.py
@@ -45,4 +41,3 @@ for a, b in zip(obj.model.y_test, obj.model.y_pred):
     print('z real: {:1.3f}\t\tz predicted: {:1.3f}'.format(a[0], b))
     
 print('The test score is : {:.3f} while the train score is: {:.3f}'.format(test_score, train_score))
-print('\nresults:\n')

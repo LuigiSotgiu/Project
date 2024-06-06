@@ -19,9 +19,12 @@ def ReadEnergetic(dir_path):
                  'Tp64r', 'Fp64r', 'e_Fp64r', 'E_Fp64r', 'Eiso', 'e_Eiso', 
                  'Liso', 'e_Liso', 'Flim', 'zmax']
 
-    file_path = dir_path + '/Burst_energetics.txt'
+    if dir_path != '':
+        dir_path += '/'
 
-    energetic_data = pd.read_csv(file_path, sep='\s+', 
+    file_path = dir_path + 'data/Burst_energetics.txt'
+
+    energetic_data = pd.read_csv(file_path, sep=r'\s+', 
                                  skiprows=47, names=col_names)
     
     return energetic_data
@@ -39,9 +42,12 @@ def ReadSpectral(dir_path):
                  'Ep', 'e_Ep', 'E_Ep', 'F', 'e_F', 'E_F', 'chi2', 'DoF', 'f_P', 
                  'P', 'Com']
 
-    file_path2 = dir_path + '/Spectral_parameters.txt'
+    if dir_path != '':
+        dir_path += '/'
 
-    spectral_data = pd.read_csv(file_path2, sep='\s+', 
+    file_path2 = dir_path + 'data/Spectral_parameters.txt'
+
+    spectral_data = pd.read_csv(file_path2, sep=r'\s+', 
                                 skiprows=57, names=col_names2)
     
     '''
@@ -116,7 +122,7 @@ def SetModel(self, model):
 
 def CorrMatrix(self, DataFrame, filter=None):
     '''
-    This function is used to drawn a correlation matrix from the features of the dataset.
+    This function is used to draw a correlation matrix from the features of the dataset.
     One can chose to add a filter list of the features if he don't want to work with all of that.
     '''
     if filter == None:
