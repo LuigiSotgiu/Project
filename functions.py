@@ -2,8 +2,10 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 #--------------------------------------------------------------------------------------------------------#
 # Data reading functions
@@ -150,8 +152,8 @@ def GetData(self, df):
     
     return X, y    
 
-def Run(self, df, train_size = None, test_size = None, random_state = None, 
-        n_estimators = 100, max_depth = None, min_samples_leaf = 1):
+def Run(self, df, train_size = None, test_size = None, random_state = None, criterion='squared_error', 
+        max_features = 1.0 ,n_estimators = 100, max_depth = None, min_samples_leaf = 1):
     '''
     This function builds the Random Forest Regressor model and saves the 
     values of X and y for the training and testing parts, the predicted y on the X_test 
@@ -165,8 +167,8 @@ def Run(self, df, train_size = None, test_size = None, random_state = None,
                                                         test_size=test_size, random_state=random_state)
     
     # Initializing the model
-    rnd_forest = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, 
-                                       min_samples_leaf=min_samples_leaf, n_jobs=-1)
+    rnd_forest = RandomForestRegressor(n_estimators=n_estimators, criterion=criterion, max_depth=max_depth, 
+                                       min_samples_leaf=min_samples_leaf, max_features=max_features, n_jobs=-1)
     # Fitting the model with the training data
     rnd_forest.fit(X_train, y_train.ravel())
     
@@ -180,3 +182,42 @@ def Run(self, df, train_size = None, test_size = None, random_state = None,
     self.y_test = y_test
     self.y_pred = predictions
     self.forest = rnd_forest
+
+#------------------------------------------------------------------------------------------# 
+def GridSearch(self, df):         # work in progress...
+    '''
+    Incomplete...
+    For now I'm just testing if it works, next I provide an implementation of this 
+    function so that one can put in input the values he wants to use the function 
+    with more flexibility.
+    '''
+    
+    # Taking the X and Y from the DataFrame
+    X, y = self.GetData(df)
+    
+    # Splitting X and y in the training and testing X and y
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.66, random_state=42)
+    
+    # Creating a pipeline of actions
+    pipe = Pipeline([
+        ('scaler', StandardScaler()), 
+        ('rf', RandomForestRegressor()) 
+    ])
+    
+    grid = {
+        'rf__n_estimators': [100, 200, 300, 400, 500, 700, 1000], 
+        'rf__criterion': ['squared_error', 'absolute_error', 'friedman_mse', 'poisson'], 
+        'rf__max_depth': [3, 4, 5, 6, 7, 8], 
+        'rf__max_features': ['sqrt', 'log2'], 
+        'rf__n_jobs': [-1]
+    }
+    
+    rf_cv = GridSearchCV(pipe, param_grid=grid, scoring='roc_auc', cv= 5, return_train_score=True)
+    rf_cv.fit(X_train, y_train)
+    
+    # Saving values in the class
+    self.X_train = X_train
+    self.X_test = X_test
+    self.y_train = y_train
+    self.y_test = y_test
+    self.Grid_search_class = rf_cv

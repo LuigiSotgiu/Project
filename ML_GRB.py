@@ -23,5 +23,8 @@ class RND_FOREST:
         self.y_pred = None
         self.forest = None
         
+        self.Grid_search_class = None   # work in progress...
+        
+        self.GridSearch = MethodType(GridSearch, self)  # work in progress...
         self.GetData = MethodType(GetData, self)
         self.Run = MethodType(Run, self)
