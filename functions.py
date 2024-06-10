@@ -184,7 +184,8 @@ def Run(self, df, train_size = None, test_size = None, random_state = None, crit
     self.forest = rnd_forest
 
 #------------------------------------------------------------------------------------------# 
-def GridSearch(self, df):         # work in progress...
+def GridSearch(self, df, grid, scoring = None,
+               cv = None, train_size = None, test_size = None):         # work in progress...
     '''
     Incomplete...
     For now I'm just testing if it works, next I provide an implementation of this 
@@ -196,7 +197,7 @@ def GridSearch(self, df):         # work in progress...
     X, y = self.GetData(df)
     
     # Splitting X and y in the training and testing X and y
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.66, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, test_size=test_size)
     
     # Creating a pipeline of actions
     pipe = Pipeline([
@@ -204,15 +205,7 @@ def GridSearch(self, df):         # work in progress...
         ('rf', RandomForestRegressor()) 
     ])
     
-    grid = {
-        'rf__n_estimators': [100, 200, 300, 400, 500, 700, 1000], 
-        'rf__criterion': ['squared_error', 'absolute_error', 'friedman_mse', 'poisson'], 
-        'rf__max_depth': [3, 4, 5, 6, 7, 8], 
-        'rf__max_features': ['sqrt', 'log2'], 
-        'rf__n_jobs': [-1]
-    }
-    
-    rf_cv = GridSearchCV(pipe, param_grid=grid, scoring='roc_auc', cv= 5, return_train_score=True)
+    rf_cv = GridSearchCV(pipe, param_grid=grid, scoring=scoring, cv=cv, return_train_score=True)
     rf_cv.fit(X_train, y_train)
     
     # Saving values in the class
