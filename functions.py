@@ -184,7 +184,7 @@ def Run(self, df, train_size = None, test_size = None, random_state = None, crit
     self.forest = rnd_forest
 
 #------------------------------------------------------------------------------------------# 
-def GridSearch(self, df, grid, scoring = None,
+def GridSearch(self, df, grid, scoring = None, refit = True, 
                cv = None, train_size = None, test_size = None):         # work in progress...
     '''
     Incomplete...
@@ -205,7 +205,8 @@ def GridSearch(self, df, grid, scoring = None,
         ('rf', RandomForestRegressor()) 
     ])
     
-    rf_cv = GridSearchCV(pipe, param_grid=grid, scoring=scoring, cv=cv, return_train_score=True)
+    rf_cv = GridSearchCV(pipe, param_grid=grid, scoring=scoring, cv=cv,
+                         return_train_score=True, refit=refit, n_jobs=-1)
     rf_cv.fit(X_train, y_train)
     
     # Saving values in the class
