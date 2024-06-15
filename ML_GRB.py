@@ -5,11 +5,13 @@ class ML_GRB:
     def __init__(self):
         self.energetic_data = None
         self.spectral_data = None
+        self.dataset = None
 
         self.model = None
 
         self.SetModel = MethodType(SetModel, self)
         self.DataReading = MethodType(DataReading, self)
+        self.DatasetExtrapolation = MethodType(DatasetExtrapolation, self)
         self.CorrMatrix = MethodType(CorrMatrix, self)
 
 class RND_FOREST:
