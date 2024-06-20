@@ -354,8 +354,9 @@ def GetData(self, df):
     
     return X, y    
 
-def Run(self, df, train_size = None, test_size = None, random_state = None, criterion='squared_error', 
-        max_features = 1.0 ,n_estimators = 100, max_depth = None, min_samples_leaf = 1):
+def Run(self, df, train_size = None, test_size = None, random_state = None, stratify=None,  
+        criterion='squared_error', max_features = 1.0 , n_estimators = 100, 
+        max_depth = None, min_samples_leaf = 1):
     '''
     This function builds the Random Forest Regressor model and saves the 
     values of X and y for the training and testing parts, the predicted y on the X_test 
@@ -365,7 +366,7 @@ def Run(self, df, train_size = None, test_size = None, random_state = None, crit
     X, y = self.GetData(df)
     
     # Splitting X and y in the training and testing X and y
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, 
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, stratify=stratify, 
                                                         test_size=test_size, random_state=random_state)
     
     # Initializing the model
@@ -386,7 +387,7 @@ def Run(self, df, train_size = None, test_size = None, random_state = None, crit
     self.forest = rnd_forest
 
 def GridSearch(self, df, grid, scoring = None, refit = True, 
-               cv = None, train_size = None, test_size = None):         # work in progress...
+               cv = None, train_size = None, test_size = None, stratify=None):
     '''
     This function do a Grid Search Cross Validation algorithm to explore the hyperparameters space 
     and find the best hyperparameters combination based on the scoring metrics.
@@ -399,7 +400,8 @@ def GridSearch(self, df, grid, scoring = None, refit = True,
     X, y = self.GetData(df)
     
     # Splitting X and y in the training and testing X and y
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, test_size=test_size)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_size, 
+                                                        test_size=test_size, stratify=stratify)
     
     # Creating a pipeline of actions
     pipe = Pipeline([
