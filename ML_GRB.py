@@ -3,8 +3,10 @@ from functions import *
 
 class ML_GRB:
     def __init__(self):
-        self.energetic_data = None
-        self.spectral_data = None
+        self.energetic_data_I = None
+        self.energetic_data_II = None
+        self.spectral_data_I = None
+        self.spectral_data_II = None
         self.dataset = None
 
         self.model = None
@@ -25,8 +27,8 @@ class RND_FOREST:
         self.y_pred = None
         self.forest = None
         
-        self.Grid_search_class = None   # work in progress...
+        self.Grid_search_class = None   
         
-        self.GridSearch = MethodType(GridSearch, self)  # work in progress...
+        self.GridSearch = MethodType(GridSearch, self)  
         self.GetData = MethodType(GetData, self)
         self.Run = MethodType(Run, self)
